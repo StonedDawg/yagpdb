@@ -15,6 +15,8 @@ services:
     # Note that we do not take responsibility for anything that happens as a result of using
     # the image above. uncomment the below line in case your want to put your own image.
     #image: PUT_YOUR_OWN_IMAGE_HERE
+    container_name: veilbot-app
+    image: RhykerWells/yagpdb-iota:modalTest
     build:
       context: ../
       dockerfile: yagpdb_docker/Dockerfile
