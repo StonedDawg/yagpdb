@@ -139,6 +139,7 @@ var yagFuncs = {
   cbutton: true,
   cmenu: true,
   ctextInput: true,
+  cfileUpload: true,
   ctextDisplay: true,
   cradioGroup: true,
   ccheckbox: true,
@@ -213,5 +214,4 @@ var yagFuncs = {
   dbBottomEntries: true,
   dbCount: true,
   dbRank: true,
-
 };

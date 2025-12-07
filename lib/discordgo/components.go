@@ -87,6 +87,8 @@ func (umc *unmarshalableMessageComponent) UnmarshalJSON(src []byte) error {
 		umc.MessageComponent = &CheckboxGroup{}
 	case CheckboxComponent:
 		umc.MessageComponent = &Checkbox{}
+	case FileUploadComponent:
+		umc.MessageComponent = &FileUpload{}
 	default:
 		logrus.Warnf("unknown component type: %d", v.Type)
 		umc.MessageComponent = &UnknownComponent{}
