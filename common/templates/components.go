@@ -58,6 +58,10 @@ func CreateComponent(expectedType discordgo.ComponentType, values ...any) (disco
 		comp := discordgo.NewShortTextInput()
 		err = json.Unmarshal(encoded, &comp)
 		component = comp
+	case discordgo.FileUploadComponent:
+		var comp discordgo.FileUpload
+		err = json.Unmarshal(encoded, &comp)
+		component = comp
 	case discordgo.UserSelectMenuComponent:
 		comp := discordgo.SelectMenu{MenuType: discordgo.UserSelectMenu}
 		err = json.Unmarshal(encoded, &comp)
@@ -487,6 +491,46 @@ func CreateTextInput(values ...any) (*discordgo.TextInput, error) {
 	}
 
 	return &textInput, err
+}
+
+func CreateFileUpload(values ...any) (*discordgo.FileUpload, error) {
+	var messageSdict map[string]any
+	switch t := values[0].(type) {
+	case SDict:
+		messageSdict = t
+	case *SDict:
+		messageSdict = *t
+	case map[string]any:
+		messageSdict = t
+	default:
+		dict, err := StringKeyDictionary(values...)
+		if err != nil {
+			return nil, err
+		}
+		messageSdict = dict
+	}
+
+	var fileUpload discordgo.FileUpload
+	convertedFileUpload := make(map[string]any)
+	for k, v := range messageSdict {
+		switch strings.ToLower(k) {
+		case "custom_id":
+			c, err := validateCustomID(TemplateCustomIDPrefix+ToString(v), nil)
+			if err != nil {
+				return nil, err
+			}
+			convertedFileUpload[k] = c
+		default:
+			convertedFileUpload[k] = v
+		}
+	}
+
+	t, err := CreateComponent(discordgo.FileUploadComponent, convertedFileUpload)
+	if err == nil {
+		fileUpload = t.(discordgo.FileUpload)
+	}
+
+	return &fileUpload, err
 }
 
 func createUnfurledMedia(value any) discordgo.UnfurledMediaItem {

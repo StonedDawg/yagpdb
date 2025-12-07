@@ -107,6 +107,7 @@ var (
 		"cradioGroup":      CreateRadioGroup,
 		"ccheckboxGroup":   CreateCheckboxGroup,
 		"ccheckbox":        CreateCheckbox,
+		"cfileUpload":		CreateFileUpload,
 
 		// message builders
 		"cembed":             CreateEmbed,

@@ -352,6 +352,16 @@ func (MessageComponentInteractionData) Type() InteractionType {
 type ModalSubmitInteractionData struct {
 	CustomID   string              `json:"custom_id"`
 	Components []TopLevelComponent `json:"components"`
+	Resolved   ComponentInteractionDataResolved `json:"resolved"`
+}
+
+// ComponentInteractionDataResolved contains the resolved data of selected option.
+type ComponentInteractionDataResolved struct {
+	Users       map[string]*User              `json:"users"`
+	Members     map[string]*Member            `json:"members"`
+	Roles       map[string]*Role              `json:"roles"`
+	Channels    map[string]*Channel           `json:"channels"`
+	Attachments map[string]*MessageAttachment `json:"attachments"`
 }
 
 // Type returns the type of interaction data.
