@@ -13,6 +13,6 @@ var Command = &commands.YAGCommand{
 	RunInDM:     true,
 
 	RunFunc: func(data *dcmd.Data) (interface{}, error) {
-		return "Please add the bot through the website\nhttps://" + common.ConfHost.GetString(), nil
+		return "Please don't think about it too much", nil
 	},
 }
