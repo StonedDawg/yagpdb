@@ -432,6 +432,7 @@ type FileUpload struct {
 	MinValues 	int 	`json:"min_values,omitempty"`
 	MaxValues	int 	`json:"max_values,omitempty"`
 	Required 	bool	`json:"required"`
+	FileTypes 	[]string `json:"file_types,omitempty"`
 
 	Values 		[]string `json:"values,omitempty"`
 }
