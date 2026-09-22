@@ -38,7 +38,7 @@ var cmdPremium = &commands.YAGCommand{
 	CmdCategory:         commands.CategoryGeneral,
 	Name:                "premium",
 	Aliases:             []string{"premiumstatus", "premiumcheck", "perks"},
-	Description:         "Shows YAGPDB premium status for this server and your premium slots.",
+	Description:         "Shows stonedbot premium status for this server and your premium slots.",
 	RequiredArgs:        0,
 	RunInDM:             true,
 	SlashCommandEnabled: true,
@@ -62,7 +62,7 @@ func runPremium(data *dcmd.Data) (interface{}, error) {
 	if confAllGuildsPremium.GetBool() {
 		return &discordgo.MessageSend{
 			Embeds: []*discordgo.MessageEmbed{{
-				Title:       "YAGPDB Premium",
+				Title:       "stonedbot premium",
 				Description: "All servers are Premium on this instance, have fun!",
 				Color:       premiumAccentActive,
 			}},
@@ -82,10 +82,10 @@ func runPremium(data *dcmd.Data) (interface{}, error) {
 
 	embed := &discordgo.MessageEmbed{Color: premiumAccentGold}
 	if premiumSlots == 0 {
-		embed.Title = "YAGPDB Premium"
+		embed.Title = "stonedbot premium"
 		embed.Description = fmt.Sprintf("<@%d> doesn't have any premium slots. Unlock higher limits and exclusive features for your servers.", userID)
 	} else {
-		embed.Title = "YAGPDB Premium"
+		embed.Title = "stonedbot premium"
 		embed.Color = premiumAccentActive
 		embed.Description = fmt.Sprintf("<@%d> has **%d** premium slot(s).", userID, premiumSlots)
 	}

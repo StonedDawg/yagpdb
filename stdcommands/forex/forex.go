@@ -89,7 +89,7 @@ func requestAPI(query string, result interface{}) error {
 	if err != nil {
 		return err
 	}
-	req.Header.Set("User-Agent", "YAGPDB.xyz (https://github.com/botlabs-gg/yagpdb)")
+	req.Header.Set("User-Agent", "comcomcom.com (https://github.com/comcomcom/comcom)")
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {

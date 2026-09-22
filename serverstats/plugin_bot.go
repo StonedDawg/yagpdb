@@ -58,7 +58,7 @@ func (p *Plugin) AddCommands() {
 			}
 
 			if !config.Public {
-				return fmt.Sprintf("Stats are set to private on this server, this can be changed in the control panel on <https://%s>", common.ConfHost.GetString()), nil
+				return fmt.Sprintf("Stats are set to private on this server, this can be changed in the control panel. current status"), nil
 			}
 
 			stats, err := RetrieveDailyStats(time.Now(), data.GuildData.GS.ID)
