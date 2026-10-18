@@ -89,9 +89,9 @@ func cmdFuncHelp(data *dcmd.Data) (interface{}, error) {
 func createInteractiveHelp(data *dcmd.Data, helpEmbeds []*discordgo.MessageEmbed) (interface{}, error) {
 	// prepend a introductionairy first page
 	firstPage := &discordgo.MessageEmbed{
-		Title: "YAGPDB Help",
-		Description: fmt.Sprintf(`YAGPDB is an open-source multipurpose discord bot that is configured through the web interface at %s.
-For more in depth help and information you should visit https://help.yagpdb.xyz/ as this command only shows information about commands.
+		Title: "stonedbot Help",
+		Description: fmt.Sprintf(`stonedbot is a personalized discord bot that is configured through the web interface at %s.
+For more in depth help and information you should visit https://help.stonedbot/ as this command only shows information about commands.
 
 Use the buttons below to change pages, or `+"`/help <command>`"+` for details on one command.`, web.BaseURL()),
 	}
