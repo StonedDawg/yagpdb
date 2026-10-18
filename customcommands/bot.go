@@ -599,7 +599,7 @@ func shouldIgnoreChannel(msg *discordgo.Message, gs *dstate.GuildSet, cState *ds
 
 const (
 	CCActionExecLimitNormal  = 3
-	CCActionExecLimitPremium = 5
+	CCActionExecLimitPremium = 10
 )
 
 func CCActionExecLimit(guildID int64) int {

@@ -36,7 +36,7 @@ var (
 
 // Setting it to 1 Month approx
 const (
-	MinIntervalTriggerDurationMinutes = 5
+	MinIntervalTriggerDurationMinutes = 3
 	MinIntervalTriggerDurationHours   = 1
 	MaxIntervalTriggerDurationHours   = 744
 	MaxIntervalTriggerDurationMinutes = 44640
@@ -951,7 +951,7 @@ const (
 	MaxCommands                   = 100
 	MaxCommandsPremium            = 500
 	MaxRoleTriggerCommands        = 1
-	MaxRoleTriggerCommandsPremium = 5
+	MaxRoleTriggerCommandsPremium = 10
 	MaxCCResponsesLength          = 10000
 	MaxCCResponsesLengthPremium   = 20000
 	MaxUserMessages               = 20
