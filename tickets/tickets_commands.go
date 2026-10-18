@@ -351,7 +351,7 @@ func (p *Plugin) AddCommands() {
 					return nil, err
 				}
 				if message.Author.ID != common.BotUser.ID {
-					return "You must select a message that YAGPDB has sent.", nil
+					return "You must select a message that STONEDBOT has sent.", nil
 				}
 
 				_, err = common.BotSession.ChannelMessageEditComplex(&discordgo.MessageEdit{
