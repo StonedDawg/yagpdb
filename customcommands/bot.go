@@ -581,7 +581,7 @@ func shouldIgnoreChannel(msg *discordgo.Message, gs *dstate.GuildSet, cState *ds
 	if !bot.IsUserMessage(msg) {
 		return true
 	}
-
+	// if message author is bot, switch to false to not ignore
 	if msg.Author.Bot {
 		return true
 	}
