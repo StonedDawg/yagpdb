@@ -3,9 +3,9 @@ no-hooks="true"
 no-tests="true"
 
 [psql]
-dbname="yagpdb"
+dbname="stonedbot"
 host="localhost"
-user="yagpdb"
-pass="ihateducks"
+user="stoneddawg"
+pass="stonedstoner"
 sslmode="disable"
 whitelist=["joined_guilds"]
