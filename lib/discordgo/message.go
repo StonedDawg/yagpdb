@@ -125,6 +125,8 @@ type Message struct {
 	// embeds can currently only be sent by webhooks.
 	Embeds []*MessageEmbed `json:"embeds"`
 
+	Poll *Poll `json:"poll,omitempty"`
+
 	// A list of users mentioned in the message.
 	Mentions []*User `json:"mentions"`
 
@@ -190,6 +192,96 @@ func (m *Message) GetMessageContents() []string {
 	return contents
 }
 
+// GetAllTextContents returns GetMessageContents plus the poll text, and the text and
+// links in the embeds and components of the message and its forwarded snapshots.
+func (m *Message) GetAllTextContents() []string {
+	contents := m.GetMessageContents()
+	if m.Poll != nil {
+		contents = append(contents, m.Poll.TextContents()...)
+	}
+
+	messages := []*Message{m}
+	for _, s := range m.MessageSnapshots {
+		if s.Message != nil {
+			messages = append(messages, s.Message)
+		}
+	}
+
+	for _, msg := range messages {
+		for _, c := range msg.Components {
+			contents = appendComponentTexts(contents, c)
+		}
+		for _, e := range msg.Embeds {
+			if e != nil {
+				contents = e.appendTexts(contents)
+			}
+		}
+	}
+
+	return contents
+}
+
+func (e *MessageEmbed) appendTexts(dst []string) []string {
+	dst = appendNonEmpty(dst, e.Title, e.Description, e.URL)
+	if e.Author != nil {
+		dst = appendNonEmpty(dst, e.Author.Name, e.Author.URL)
+	}
+	if e.Footer != nil {
+		dst = appendNonEmpty(dst, e.Footer.Text)
+	}
+	for _, f := range e.Fields {
+		if f != nil {
+			dst = appendNonEmpty(dst, f.Name, f.Value)
+		}
+	}
+	for _, c := range e.Components {
+		dst = appendComponentTexts(dst, c)
+	}
+	return dst
+}
+
+func appendComponentTexts(dst []string, c MessageComponent) []string {
+	switch t := c.(type) {
+	case *Container:
+		return appendComponentTexts(dst, *t)
+	case *Section:
+		return appendComponentTexts(dst, *t)
+	case *ActionsRow:
+		return appendComponentTexts(dst, *t)
+	case *TextDisplay:
+		return appendComponentTexts(dst, *t)
+	case *Button:
+		return appendComponentTexts(dst, *t)
+	case Container:
+		for _, child := range t.Components {
+			dst = appendComponentTexts(dst, child)
+		}
+	case Section:
+		for _, child := range t.Components {
+			dst = appendComponentTexts(dst, child)
+		}
+		dst = appendComponentTexts(dst, t.Accessory)
+	case ActionsRow:
+		for _, child := range t.Components {
+			dst = appendComponentTexts(dst, child)
+		}
+	case TextDisplay:
+		dst = appendNonEmpty(dst, t.Content)
+	case Button:
+		dst = appendNonEmpty(dst, t.Label, t.URL)
+	}
+	return dst
+}
+
+func appendNonEmpty(dst []string, values ...string) []string {
+	for _, v := range values {
+		if v != "" {
+			dst = append(dst, v)
+		}
+	}
+	return dst
+}
+
 func (m *Message) GetMessageEmbeds() []*MessageEmbed {
 	embeds := m.Embeds
 	for _, s := range m.MessageSnapshots {
@@ -243,15 +335,16 @@ func (m *Message) UnmarshalJSON(data []byte) error {
 			return errors.New("non top level component passed to message unmarshaller")
 		}
 	}
-
-	if m.Flags&MessageFlagsIsComponentsV2 != 0 {
-		var contents []string
-		for _, c := range m.Components {
-			contents = append(contents, GetTextDisplayContent(c)...)
-		}
-		m.Content = strings.Join(contents, "\n")
-	}
 	return err
+}
+
+// TextContents returns the content of every text display in the message's components, in order.
+func (m *Message) TextContents() []string {
+	var contents []string
+	for _, c := range m.Components {
+		contents = append(contents, GetTextDisplayContent(c)...)
+	}
+	return contents
 }
 
 // Custom UnmarshalJSON for MessageSend to support v2 components
@@ -515,6 +608,7 @@ type MessageEmbed struct {
 	Provider    *MessageEmbedProvider  `json:"provider,omitempty"`
 	Author      *MessageEmbedAuthor    `json:"author,omitempty"`
 	Fields      []*MessageEmbedField   `json:"fields,omitempty"`
+	Components  []TopLevelComponent    `json:"components,omitempty"`
 	Flags       MessageEmbedFlags      `json:"flags,omitempty"`
 
 	//flag that tells the marshaller to marshal struct as nil
@@ -537,6 +631,35 @@ func (e *MessageEmbed) MarshalJSON() ([]byte, error) {
 	}
 	type EmbedAlias MessageEmbed
 	return json.Marshal(&struct{ *EmbedAlias }{EmbedAlias: (*EmbedAlias)(e)})
+}
+
+func (e *MessageEmbed) UnmarshalJSON(data []byte) error {
+	type embedAlias MessageEmbed
+	var v struct {
+		embedAlias
+		RawComponents []unmarshalableMessageComponent `json:"components"`
+	}
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+
+	*e = MessageEmbed(v.embedAlias)
+	e.Components = nil
+	for _, raw := range v.RawComponents {
+		if comp, ok := raw.MessageComponent.(TopLevelComponent); ok {
+			e.Components = append(e.Components, comp)
+		}
+	}
+	return nil
+}
+
+// TextContents returns the content of every text display in a component embed, in order.
+func (e *MessageEmbed) TextContents() []string {
+	var contents []string
+	for _, c := range e.Components {
+		contents = append(contents, GetTextDisplayContent(c)...)
+	}
+	return contents
 }
 
 // MessageReactions holds a reactions object for a message.

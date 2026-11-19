@@ -178,6 +178,7 @@ func Run() {
 	}
 
 	loadAd()
+	loadLandingComponentEmbed()
 
 	logger.Info("Running webservers")
 	runServers(mux)
@@ -412,6 +413,7 @@ func setupRootMux() {
 
 	// General handlers
 	mux.Handle(pat.Get("/"), ControllerHandler(HandleLandingPage, "index"))
+	mux.HandleFunc(pat.Get("/component-embed.json"), HandleLandingComponentEmbed)
 	mux.HandleFunc(pat.Get("/login"), HandleLogin)
 	mux.HandleFunc(pat.Get("/confirm_login"), HandleConfirmLogin)
 	mux.HandleFunc(pat.Get("/logout"), HandleLogout)
@@ -463,8 +465,13 @@ type SidebarItem struct {
 	Icon            string
 	CustomIconImage string
 	New             bool
+	NewUntil        time.Time
 	External        bool
 	IsPremium       bool
+}
+
+func (s *SidebarItem) IsNew() bool {
+	return s.New || time.Now().Before(s.NewUntil)
 }
 
 var sideBarItems = make(map[string][]*SidebarItem)
